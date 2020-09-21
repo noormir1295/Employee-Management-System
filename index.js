@@ -1,7 +1,9 @@
+//Dependencies
 const mysql = require("mysql");
 const inquirer=require("inquirer");
 const consoleTable=require("console.table");
 
+//Connection
 var connection = mysql.createConnection({
   ost: "localhost",
   port: 3306,
@@ -67,3 +69,41 @@ function main() {
                     continuePrompt();
                 });
                 break;
+                
+                //Adds a new role to the the role DB 
+            case "Add A Role":
+                var query = connection.query("SELECT id, department FROM department", function (err, data) {
+                    if (err) throw err;
+                    let choices = data.map(x => `${x.id} - ${x.department}`);
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            name: "title",
+                            message: "Enter role name:",
+                            validate: validateString
+                        },
+                        {
+                            type: "input",
+                            name: "salary",
+                            message: "Enter salary:",
+                            validate: validateNumber
+                        },
+                        {
+                            type: "list",
+                            name: "department",
+                            message: "Select a department:",
+                            choices: [...choices]
+                        }
+                    ]).then(function (data) {
+                        var arr = data.department.split(" ");
+                        var deptID = parseInt(arr[0]);
+                        var query = connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.title}', ${data.salary}, ${deptID})`, function (err, data) {
+                            if (err) throw err;
+                            console.log("A role has been added to the table!!")
+                            continuePrompt();
+                        });
+                    });
+                });
+                break;
+
+                
