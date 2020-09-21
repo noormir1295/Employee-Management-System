@@ -70,7 +70,7 @@ function main() {
                 });
                 break;
                 
-                //Adds a new role to the the role DB 
+                //Adding new role inside database 
             case "Add A Role":
                 var query = connection.query("SELECT id, department FROM department", function (err, data) {
                     if (err) throw err;
@@ -106,7 +106,7 @@ function main() {
                 });
                 break;
 
-                //used for adding an employee 
+                //Adding an employee 
             case "Add An Employee":
                 var query = connection.query("SELECT id, title FROM role", function (err, data) {
                     if (err) throw err;
@@ -141,3 +141,24 @@ function main() {
                     });
                 });
                 break;
+
+               //Adding a department 
+            case "Add a Department":
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "department",
+                        message: "Enter department's name:",
+                        validate: validateString
+                    }
+                ]).then(function (data) {
+                    var query = connection.query(`INSERT INTO department (department) VALUES ('${data.department}');`, function (err, data) {
+                        if (err) throw err;
+                        return data;
+                        
+                    });
+                    console.log("Department has been added!!")
+                    continuePrompt();
+                });
+                break;
+ 
