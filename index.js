@@ -106,4 +106,38 @@ function main() {
                 });
                 break;
 
-                
+                //used for adding an employee 
+            case "Add An Employee":
+                var query = connection.query("SELECT id, title FROM role", function (err, data) {
+                    if (err) throw err;
+                    let choices = data.map(x => `${x.id} - ${x.title}`);
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            name: "firstName",
+                            message: "Enter employee's first name: ",
+                            validate: validateString
+                        },
+                        {
+                            type: "input",
+                            name: "lastName",
+                            message: "Enter employee's last name: ",
+                            validate: validateString
+                        },
+                        {
+                            type: "list",
+                            name: "role",
+                            message: "Select employee's role:",
+                            choices: [...choices]
+                        }
+                    ]).then(function (data) {
+                        var arr = data.role.split(" ");
+                        var roleID = parseInt(arr[0]);
+                        var query = connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${data.firstName}', '${data.lastName}', ${roleID}, 0)`, function (err, data) {
+                            if (err) throw err;
+                            console.log("An employee has been added!!")
+                            continuePrompt();
+                        });
+                    });
+                });
+                break;
